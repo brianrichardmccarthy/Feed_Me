@@ -102,18 +102,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     fileprivate func animateCrocodile() {
-        let durationOpen = drand48() > 0.5 ? 3.0 : 2.0
+        let durationOpen = drand48() + 2
         let open = SKAction.setTexture(SKTexture(imageNamed: ImageName.CrocMouthOpen))
         let waitOpen = SKAction.wait(forDuration: durationOpen)
         
-        let durationClosed: Double
-        let r = drand48()
-        
-        if r > 0.67 {
-            durationClosed = 5.0
-        } else {
-            durationClosed = r > 0.33 ? 4.0 : 3.0
-        }
+        let durationClosed = drand48() + drand48() + 3.0
         
         let close = SKAction.setTexture(SKTexture(imageNamed: ImageName.CrocMouthClosed))
         let waitClosed = SKAction.wait(forDuration: durationClosed)
@@ -123,19 +116,77 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
-    fileprivate func runNomNomAnimationWithDelay(_ delay: TimeInterval) { }
+    fileprivate func runNomNomAnimationWithDelay(_ delay: TimeInterval) {
+        crocodile.removeAllActions()
+        
+        let closeMouth = SKAction.setTexture(SKTexture(imageNamed: ImageName.CrocMouthClosed))
+        let wait = SKAction.wait(forDuration: delay)
+        let openMouth = SKAction.setTexture(SKTexture(imageNamed: ImageName.CrocMouthOpen))
+        let sequence = SKAction.sequence([closeMouth, wait, openMouth, wait, closeMouth])
+        
+        crocodile.run(sequence)
+    }
     
     //MARK: - Touch handling
     
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) { }
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            let startPoint = touch.location(in: self)
+            let endPoint = touch.previousLocation(in: self)
+            
+            // check if vine cut
+            scene?.physicsWorld.enumerateBodies(alongRayStart: startPoint, end: endPoint,
+                                                using: { (body, point, normal, stop) in
+                                                    self.checkIfVineCutWithBody(body)
+            })
+            
+            // produce some nice particles
+            showMoveParticles(touchPosition: startPoint)
+        }
+    }
+    
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) { }
+    
     fileprivate func showMoveParticles(touchPosition: CGPoint) { }
     
     //MARK: - Game logic
     
     override func update(_ currentTime: TimeInterval) { }
-    func didBegin(_ contact: SKPhysicsContact) { }
-    fileprivate func checkIfVineCutWithBody(_ body: SKPhysicsBody) { }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        if (contact.bodyA.node == crocodile && contact.bodyB.node == prize)
+            || (contact.bodyA.node == prize && contact.bodyB.node == crocodile) {
+            
+            // shrink the pineapple away
+            let shrink = SKAction.scale(to: 0, duration: 0.08)
+            let removeNode = SKAction.removeFromParent()
+            let sequence = SKAction.sequence([shrink, removeNode])
+            prize.run(sequence)
+            runNomNomAnimationWithDelay(0.15)
+//            crocodile.removeAllActions()
+//            crocodile.texture = SKTexture(imageNamed: ImageName.CrocMouthOpen)
+//            animateCrocodile()
+        }
+    }
+    
+    fileprivate func checkIfVineCutWithBody(_ body: SKPhysicsBody) {
+        let node = body.node!
+        
+        // if it has a name it must be a vine node
+        if let name = node.name {
+            // snip the vine
+            node.removeFromParent()
+            
+            // fade out all nodes matching name
+            enumerateChildNodes(withName: name, using: { (node, stop) in
+                let fadeAway = SKAction.fadeOut(withDuration: 0.25)
+                let removeNode = SKAction.removeFromParent()
+                let sequence = SKAction.sequence([fadeAway, removeNode])
+                node.run(sequence)
+            })
+        }
+    }
+    
     fileprivate func switchToNewGameWithTransition(_ transition: SKTransition) { }
     
     //MARK: - Audio
