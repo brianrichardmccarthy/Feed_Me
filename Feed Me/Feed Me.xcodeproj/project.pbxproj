@@ -23,7 +23,9 @@
 		37C3BEA0219ECE1500395565 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 37C3BE9E219ECE1500395565 /* Main.storyboard */; };
 		37C3BEA2219ECE1800395565 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37C3BEA1219ECE1800395565 /* Assets.xcassets */; };
 		37C3BEA5219ECE1800395565 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 37C3BEA3219ECE1800395565 /* LaunchScreen.storyboard */; };
+		610BCFED21B554900016A5F9 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 610BCFEC21B554900016A5F9 /* MainMenu.swift */; };
 		6134D987219EF2CB007A779F /* VineNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6134D986219EF2CB007A779F /* VineNode.swift */; };
+		6151097221B55D2D00CA9AD6 /* MainMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6151097121B55D2D00CA9AD6 /* MainMenu.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,7 +47,9 @@
 		37C3BEA1219ECE1800395565 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		37C3BEA4219ECE1800395565 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		37C3BEA6219ECE1800395565 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		610BCFEC21B554900016A5F9 /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		6134D986219EF2CB007A779F /* VineNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VineNode.swift; sourceTree = "<group>"; };
+		6151097121B55D2D00CA9AD6 /* MainMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainMenu.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +148,8 @@
 				37C3BEA1219ECE1800395565 /* Assets.xcassets */,
 				37C3BEA3219ECE1800395565 /* LaunchScreen.storyboard */,
 				37C3BEA6219ECE1800395565 /* Info.plist */,
+				610BCFEC21B554900016A5F9 /* MainMenu.swift */,
+				6151097121B55D2D00CA9AD6 /* MainMenu.sks */,
 			);
 			path = "Feed Me";
 			sourceTree = "<group>";
@@ -214,6 +220,7 @@
 				37276B91219ECFC100C0174E /* Splash.caf in Resources */,
 				37276B8B219ECFC100C0174E /* Particle.png in Resources */,
 				37276B8A219ECFC100C0174E /* Level-01.plist in Resources */,
+				6151097221B55D2D00CA9AD6 /* MainMenu.sks in Resources */,
 				37C3BE97219ECE1500395565 /* GameScene.sks in Resources */,
 				37C3BEA2219ECE1800395565 /* Assets.xcassets in Resources */,
 				37C3BEA5219ECE1800395565 /* LaunchScreen.storyboard in Resources */,
@@ -229,6 +236,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				37C3BE9B219ECE1500395565 /* GameScene.swift in Sources */,
+				610BCFED21B554900016A5F9 /* MainMenu.swift in Sources */,
 				37C3BE9D219ECE1500395565 /* GameViewController.swift in Sources */,
 				37C3BE95219ECE1500395565 /* AppDelegate.swift in Sources */,
 				6134D987219EF2CB007A779F /* VineNode.swift in Sources */,

@@ -29,7 +29,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         setUpPrize()
         setUpVines()
         setUpCrocodile()
-        //setUpAudio()
+        setUpAudio()
     }
     
     //MARK: - Level setup
