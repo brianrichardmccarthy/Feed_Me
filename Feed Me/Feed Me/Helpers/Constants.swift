@@ -23,6 +23,8 @@ struct ImageName {
     static let ButtonMenu = "button-menu"
     static let ButtonRestart = "button-restart"
     static let Heart = "heart-full"
+    static let Checked = "checkbox"
+    static let Unchecked = "unchecked"
 }
 
 struct Layer {
@@ -50,4 +52,5 @@ struct SoundFile {
 struct GameConfiguration {
     static let VineDataFile = "Level-01.plist"
     static let CanCutMultipleVinesAtOnce = false
+    static var playMusic = true
 }

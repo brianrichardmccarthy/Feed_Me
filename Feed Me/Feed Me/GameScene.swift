@@ -255,7 +255,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             GameScene.backgroundMusicPlayer.numberOfLoops = -1
         }
         
-        if !GameScene.backgroundMusicPlayer.isPlaying {
+        if !GameScene.backgroundMusicPlayer.isPlaying && GameConfiguration.playMusic {
             GameScene.backgroundMusicPlayer.play()
         }
         

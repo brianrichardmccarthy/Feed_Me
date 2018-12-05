@@ -13,33 +13,39 @@ class MainMenu: SKScene {
     var playButton = SKSpriteNode(texture: SKTexture(imageNamed: ImageName.Button))
     var playLabel = SKLabelNode(fontNamed: "Chalkduster")
     
-    var optionsButton = SKSpriteNode(texture: SKTexture(imageNamed: ImageName.Button))
-    var optionsLabel = SKLabelNode(fontNamed: "Chalkduster")
+    var soundOnBtn: SKSpriteNode?
+    var soundOnLabel: SKLabelNode?
     
     override func didMove(to view: SKView) {
+        
+        let background = SKSpriteNode(imageNamed: ImageName.Background)
+        background.anchorPoint = CGPoint(x: 0, y: 0)
+        background.position = CGPoint(x: 0, y: 0)
+        background.zPosition = Layer.Background
+        background.size = self.size
+        addChild(background)
+        
         playButton.position = CGPoint(x: size.width/2, y: size.height/2)
         playButton.size = playButton.texture!.size()
         playButton.name = "playBtn"
         playButton.zPosition = 1
         addChild(playButton)
         
-        
         playLabel.position = CGPoint(x: size.width/2, y: size.height/2)
         playLabel.text = "Play"
         playLabel.zPosition = 2
         addChild(playLabel)
         
-        optionsButton.position = CGPoint(x: size.width/2, y: size.height * 0.4)
-        optionsButton.size = optionsButton.texture!.size()
-        optionsButton.name = "optionsBtn"
-        optionsButton.zPosition = 1
-        addChild(optionsButton)
+        soundOnBtn = SKSpriteNode(imageNamed: ImageName.Checked)
+        soundOnBtn!.position = CGPoint(x: size.width * 0.75, y: size.height * 0.30)
+        soundOnBtn!.zPosition = 1
+        soundOnBtn!.size = CGSize(width: 100, height: 100)
+        addChild(soundOnBtn!)
         
-        
-        optionsLabel.position = CGPoint(x: size.width/2, y: size.height * 0.4)
-        optionsLabel.text = "Options"
-        optionsLabel.zPosition = 2
-        addChild(optionsLabel)
+        soundOnLabel = SKLabelNode(fontNamed: "Chalkduster")
+        soundOnLabel!.text = "Enable Sound?"
+        soundOnLabel!.position = CGPoint(x: size.width * 0.45, y: size.height * 0.29)
+        addChild(soundOnLabel!)
         
     }
     
@@ -57,13 +63,14 @@ class MainMenu: SKScene {
                     self.view?.presentScene(scene, transition: SKTransition.fade(withDuration: 1.0))
                 })
                 shouldRun = true
-            } else if objects.contains(playLabel) || objects.contains(playButton) {
-                sceneChange = SKAction.run({
-                    let scene = GameScene(size: self.size)
-                    self.view?.presentScene(scene, transition: SKTransition.fade(withDuration: 1.0))
-                })
-                shouldRun = true
-                
+            } else if objects.contains(soundOnBtn!) {
+                if GameConfiguration.playMusic {
+                    GameConfiguration.playMusic = false
+                    soundOnBtn!.texture = SKTexture(imageNamed: ImageName.Unchecked)
+                } else {
+                    GameConfiguration.playMusic = true
+                    soundOnBtn!.texture = SKTexture(imageNamed: ImageName.Checked)
+                }
             }
             
             if shouldRun {
