@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		37276B8A219ECFC100C0174E /* Level-01.plist in Resources */ = {isa = PBXBuildFile; fileRef = 37276B80219ECFC100C0174E /* Level-01.plist */; };
 		37276B8B219ECFC100C0174E /* Particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 37276B82219ECFC100C0174E /* Particle.png */; };
 		37276B8C219ECFC100C0174E /* Particle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 37276B83219ECFC100C0174E /* Particle.sks */; };
 		37276B8D219ECFC100C0174E /* Particle@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37276B84219ECFC100C0174E /* Particle@2x.png */; };
@@ -26,10 +25,12 @@
 		610BCFED21B554900016A5F9 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 610BCFEC21B554900016A5F9 /* MainMenu.swift */; };
 		6134D987219EF2CB007A779F /* VineNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6134D986219EF2CB007A779F /* VineNode.swift */; };
 		6151097221B55D2D00CA9AD6 /* MainMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 6151097121B55D2D00CA9AD6 /* MainMenu.sks */; };
+		61A02CA621B808F5000C1617 /* Level-1.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61A02CA321B808F5000C1617 /* Level-1.plist */; };
+		61A02CA721B808F5000C1617 /* Level-2.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61A02CA421B808F5000C1617 /* Level-2.plist */; };
+		61A02CA821B808F5000C1617 /* Level-3.plist in Resources */ = {isa = PBXBuildFile; fileRef = 61A02CA521B808F5000C1617 /* Level-3.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		37276B80219ECFC100C0174E /* Level-01.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Level-01.plist"; sourceTree = "<group>"; };
 		37276B82219ECFC100C0174E /* Particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Particle.png; sourceTree = "<group>"; };
 		37276B83219ECFC100C0174E /* Particle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Particle.sks; sourceTree = "<group>"; };
 		37276B84219ECFC100C0174E /* Particle@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Particle@2x.png"; sourceTree = "<group>"; };
@@ -50,6 +51,9 @@
 		610BCFEC21B554900016A5F9 /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		6134D986219EF2CB007A779F /* VineNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VineNode.swift; sourceTree = "<group>"; };
 		6151097121B55D2D00CA9AD6 /* MainMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainMenu.sks; sourceTree = "<group>"; };
+		61A02CA321B808F5000C1617 /* Level-1.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Level-1.plist"; sourceTree = "<group>"; };
+		61A02CA421B808F5000C1617 /* Level-2.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Level-2.plist"; sourceTree = "<group>"; };
+		61A02CA521B808F5000C1617 /* Level-3.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Level-3.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,7 +96,9 @@
 		37276B7F219ECFC100C0174E /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				37276B80219ECFC100C0174E /* Level-01.plist */,
+				61A02CA321B808F5000C1617 /* Level-1.plist */,
+				61A02CA421B808F5000C1617 /* Level-2.plist */,
+				61A02CA521B808F5000C1617 /* Level-3.plist */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -212,14 +218,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61A02CA821B808F5000C1617 /* Level-3.plist in Resources */,
+				61A02CA621B808F5000C1617 /* Level-1.plist in Resources */,
 				37276B8F219ECFC100C0174E /* NomNom.caf in Resources */,
 				37276B8D219ECFC100C0174E /* Particle@2x.png in Resources */,
 				37276B8C219ECFC100C0174E /* Particle.sks in Resources */,
+				61A02CA721B808F5000C1617 /* Level-2.plist in Resources */,
 				37276B90219ECFC100C0174E /* Slice.caf in Resources */,
 				37C3BEA0219ECE1500395565 /* Main.storyboard in Resources */,
 				37276B91219ECFC100C0174E /* Splash.caf in Resources */,
 				37276B8B219ECFC100C0174E /* Particle.png in Resources */,
-				37276B8A219ECFC100C0174E /* Level-01.plist in Resources */,
 				6151097221B55D2D00CA9AD6 /* MainMenu.sks in Resources */,
 				37C3BE97219ECE1500395565 /* GameScene.sks in Resources */,
 				37C3BEA2219ECE1800395565 /* Assets.xcassets in Resources */,

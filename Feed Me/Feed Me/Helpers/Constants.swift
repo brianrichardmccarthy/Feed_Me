@@ -50,7 +50,16 @@ struct SoundFile {
 }
 
 struct GameConfiguration {
-    static let VineDataFile = "Level-01.plist"
-    static let CanCutMultipleVinesAtOnce = false
+    static var fileName = "Level-"
+    static var levelNumber = 2
+    static var fileExtension = ".plist"
+    static var CanCutMultipleVinesAtOnce = false
     static var playMusic = true
+    
+    static let MaxLevels = 3
+    
+    static func file() -> String {
+        return fileName + String(levelNumber) + fileExtension
+    }
+    
 }
