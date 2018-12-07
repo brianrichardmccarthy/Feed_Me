@@ -16,6 +16,9 @@ class MainMenu: SKScene {
     var soundOnBtn: SKSpriteNode?
     var soundOnLabel: SKLabelNode?
     
+    var cutMultipleVinesBtn: SKSpriteNode?
+    var cutMultipleVinesLabel: SKLabelNode?
+    
     override func didMove(to view: SKView) {
         
         let background = SKSpriteNode(imageNamed: ImageName.Background)
@@ -47,6 +50,17 @@ class MainMenu: SKScene {
         soundOnLabel!.position = CGPoint(x: size.width * 0.45, y: size.height * 0.29)
         addChild(soundOnLabel!)
         
+        cutMultipleVinesBtn = SKSpriteNode(imageNamed: ImageName.Unchecked)
+        cutMultipleVinesBtn!.position = CGPoint(x: size.width * 0.90, y: size.height * 0.20)
+        cutMultipleVinesBtn!.zPosition = 1
+        cutMultipleVinesBtn!.size = CGSize(width: 100, height: 100)
+        addChild(cutMultipleVinesBtn!)
+        
+        cutMultipleVinesLabel = SKLabelNode(fontNamed: "Chalkduster")
+        cutMultipleVinesLabel!.text = "Cut multiple vines at once?"
+        cutMultipleVinesLabel!.position = CGPoint(x: size.width * 0.45, y: size.height * 0.19)
+        addChild(cutMultipleVinesLabel!)
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -70,6 +84,14 @@ class MainMenu: SKScene {
                 } else {
                     GameConfiguration.playMusic = true
                     soundOnBtn!.texture = SKTexture(imageNamed: ImageName.Checked)
+                }
+            } else if objects.contains(cutMultipleVinesBtn!) {
+                if GameConfiguration.CanCutMultipleVinesAtOnce {
+                    GameConfiguration.CanCutMultipleVinesAtOnce = false
+                    cutMultipleVinesBtn!.texture = SKTexture(imageNamed: ImageName.Unchecked)
+                } else {
+                    GameConfiguration.CanCutMultipleVinesAtOnce = true
+                    cutMultipleVinesBtn!.texture = SKTexture(imageNamed: ImageName.Checked)
                 }
             }
             

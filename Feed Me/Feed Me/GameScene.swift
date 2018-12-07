@@ -73,7 +73,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     fileprivate func setUpVines() {
         // 1 load vine data
-        let dataFile = Bundle.main.path(forResource: GameConfiguration.file(), ofType: nil)
+        print("<\(GameConfiguration.file)>")
+        let dataFile = Bundle.main.path(forResource: GameConfiguration.file, ofType: nil)
         let vines = NSArray(contentsOfFile: dataFile!) as! [NSDictionary]
         
         // 2 add vines
@@ -174,10 +175,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             run(splashSoundAction)
             levelOver = true
             
-            GameConfiguration.levelNumber += 1
+            GameConfiguration.level += 1
             
-            if GameConfiguration.levelNumber >= GameConfiguration.MaxLevels {
-                GameConfiguration.levelNumber = 1
+            if GameConfiguration.level >= GameConfiguration.MaxLevels {
+                GameConfiguration.level = 1
             }
             
             switchToNewGameWithTransition(SKTransition.doorway(withDuration: 1.0))
