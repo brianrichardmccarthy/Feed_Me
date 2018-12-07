@@ -40,6 +40,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    var mainMenuBtn: SKSpriteNode?
+    var mainMenuLabel: SKLabelNode?
+    var playAgainBtn: SKSpriteNode?
+    var playAgainLabel: SKLabelNode?
     
     
     override func didMove(to view: SKView) {
@@ -56,7 +60,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     fileprivate func setupHUD() {
         if currentLives == nil {
-            currentLives = GameConfiguration.maxLives
+            currentLives = 1//GameConfiguration.maxLives
         }
         
         for n in 1...GameConfiguration.maxLives {
@@ -191,22 +195,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //MARK: - Touch handling
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        //if levelOver || gameOver {
+        //    return
+        //}
         vineCut = false
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        for touch in touches {
-            let startPoint = touch.location(in: self)
-            let endPoint = touch.previousLocation(in: self)
-            
-            // check if vine cut
-            scene?.physicsWorld.enumerateBodies(alongRayStart: startPoint, end: endPoint,
-                                                using: { (body, point, normal, stop) in
-                                                    self.checkIfVineCutWithBody(body)
-            })
-            
-            // produce some nice particles
-            showMoveParticles(touchPosition: startPoint)
+        if levelOver || gameOver {
+            if let touch = touches.first {
+                let objects = nodes(at: touch.location(in: self))
+                if objects.contains(mainMenuLabel!) || objects.contains(mainMenuBtn!) {
+                    // load the main menu
+                } else if objects.contains(playAgainBtn!) || objects.contains(playAgainLabel!) {
+                    // restart the game
+                }
+            }
+        } else {
+            for touch in touches {
+                let startPoint = touch.location(in: self)
+                let endPoint = touch.previousLocation(in: self)
+                
+                // check if vine cut
+                scene?.physicsWorld.enumerateBodies(alongRayStart: startPoint, end: endPoint,
+                                                    using: { (body, point, normal, stop) in
+                                                        self.checkIfVineCutWithBody(body)
+                })
+                
+                // produce some nice particles
+                showMoveParticles(touchPosition: startPoint)
+            }
         }
     }
     
@@ -218,7 +236,39 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         
-        if levelOver {
+        if currentLives! <= 0 {
+            gameOver = true
+        }
+        
+        if gameOver {
+            if mainMenuBtn == nil {
+                
+                // https://stackoverflow.com/questions/48039140/how-to-get-all-child-nodes-with-name-in-swift-with-scene-kit
+                children.filter({ $0.zPosition == Layer.Crocodile || $0.zPosition == Layer.Prize || $0.zPosition == Layer.Vine }).forEach({ $0.removeFromParent() })
+                
+                mainMenuBtn = SKSpriteNode(imageNamed: ImageName.Button)
+                mainMenuBtn!.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+                mainMenuBtn!.size = mainMenuBtn!.texture!.size()
+                addChild(mainMenuBtn!)
+                
+                mainMenuLabel = SKLabelNode(fontNamed: "chalkduster")
+                mainMenuLabel!.text = "Main Menu"
+                mainMenuLabel!.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
+                addChild(mainMenuLabel!)
+                
+                playAgainBtn = SKSpriteNode(imageNamed: ImageName.Button)
+                playAgainBtn!.position = CGPoint(x: self.size.width / 2, y: self.size.height * 0.75)
+                playAgainBtn!.size = playAgainBtn!.texture!.size()
+                addChild(playAgainBtn!)
+                
+                playAgainLabel = SKLabelNode(fontNamed: "chalkduster")
+                playAgainLabel!.text = "Play Again"
+                playAgainLabel!.position = CGPoint(x: self.size.width / 2, y: self.size.height * 0.75)
+                addChild(playAgainLabel!)
+            }
+        }
+        
+        if levelOver || gameOver {
             return
         }
         
