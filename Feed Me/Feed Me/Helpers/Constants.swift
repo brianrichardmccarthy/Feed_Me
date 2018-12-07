@@ -52,8 +52,9 @@ struct SoundFile {
 struct GameConfiguration {
     static var level = 1
     static var file = "Level-\(level).plist"
-    static var CanCutMultipleVinesAtOnce = false
+    static var canCutMultipleVinesAtOnce = false
     static var playMusic = true
     
     static let MaxLevels = 3
+    static var maxLives = 3
 }

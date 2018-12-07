@@ -15,6 +15,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var crocodile: SKSpriteNode!
     private var prize: SKSpriteNode!
     
+    private var currentLives: Int?
+    
     private static var backgroundMusicPlayer: AVAudioPlayer!
     private var sliceSoundAction: SKAction!
     private var splashSoundAction: SKAction!
@@ -23,7 +25,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var levelOver = false
     private var vineCut = false
     
+    var scoreLabel: SKLabelNode! = SKLabelNode(fontNamed: "Chalkduster")
+    var levelLabel: SKLabelNode! = SKLabelNode(fontNamed: "Chalkduster")
+    
+    private var gameOver = false
+    private var curScore = 0 {
+        didSet {
+            scoreLabel.text = "Score \(curScore)/\(maxScore)"
+        }
+    }
+    private var maxScore = 0 {
+        didSet {
+            scoreLabel.text = "Score \(curScore)/\(maxScore)"
+        }
+    }
+    
+    
+    
     override func didMove(to view: SKView) {
+        setupHUD()
         setUpScenery()
         setUpPhysics()
         setUpPrize()
@@ -33,6 +53,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     //MARK: - Level setup
+    
+    fileprivate func setupHUD() {
+        if currentLives == nil {
+            currentLives = GameConfiguration.maxLives
+        }
+        
+        for n in 1...GameConfiguration.maxLives {
+            let label = SKSpriteNode(imageNamed: ImageName.Heart)
+            label.size = CGSize(width: 75, height: 75)
+            label.zPosition = 6
+            label.position = CGPoint(x: 0 + (label.size.width * CGFloat(n)) + ((n > 1) ? 20 : 0), y: size.height * 0.95)
+            
+            if currentLives! < GameConfiguration.maxLives && n > currentLives! {
+                label.alpha = CGFloat(0.5)
+            }
+            
+            addChild(label)
+        }
+        
+        scoreLabel.text = "Score \(curScore)/\(maxScore)"
+        scoreLabel.position = CGPoint(x: size.width * 0.75, y: size.height * 0.95)
+        addChild(scoreLabel)
+        
+        levelLabel.text = "Level \(maxScore + 1)"
+        levelLabel.position = CGPoint(x: size.width * 0.75, y: size.height * 0.9)
+        addChild(levelLabel)
+        
+    }
     
     fileprivate func setUpPhysics() {
         physicsWorld.contactDelegate = self
@@ -73,7 +121,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     fileprivate func setUpVines() {
         // 1 load vine data
-        print("<\(GameConfiguration.file)>")
         let dataFile = Bundle.main.path(forResource: GameConfiguration.file, ofType: nil)
         let vines = NSArray(contentsOfFile: dataFile!) as! [NSDictionary]
         
@@ -109,6 +156,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         crocodile.physicsBody?.isDynamic = false
         addChild(crocodile)
         animateCrocodile()
+        
     }
     
     fileprivate func animateCrocodile() {
@@ -133,6 +181,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let wait = SKAction.wait(forDuration: delay)
         let openMouth = SKAction.setTexture(SKTexture(imageNamed: ImageName.CrocMouthOpen))
         let sequence = SKAction.sequence([closeMouth, wait, openMouth, wait, closeMouth])
+        
+        maxScore += 1
+        curScore += 1
         
         crocodile.run(sequence)
     }
@@ -174,8 +225,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if prize.position.y <= 0 {
             run(splashSoundAction)
             levelOver = true
-            
+            currentLives! -= 1
             GameConfiguration.level += 1
+            maxScore += 1
             
             if GameConfiguration.level >= GameConfiguration.MaxLevels {
                 GameConfiguration.level = 1
@@ -209,7 +261,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     fileprivate func checkIfVineCutWithBody(_ body: SKPhysicsBody) {
         
-        if vineCut && !GameConfiguration.CanCutMultipleVinesAtOnce {
+        if vineCut && !GameConfiguration.canCutMultipleVinesAtOnce {
             return
         }
         
@@ -238,9 +290,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     fileprivate func switchToNewGameWithTransition(_ transition: SKTransition) {
+        
         let delay = SKAction.wait(forDuration: 1)
         let sceneChange = SKAction.run({
             let scene = GameScene(size: self.size)
+            scene.currentLives = self.currentLives
+            scene.curScore = self.curScore
+            scene.maxScore = self.maxScore
+            
             self.view?.presentScene(scene, transition: transition)
         })
         

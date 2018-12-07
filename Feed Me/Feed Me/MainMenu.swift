@@ -86,11 +86,11 @@ class MainMenu: SKScene {
                     soundOnBtn!.texture = SKTexture(imageNamed: ImageName.Checked)
                 }
             } else if objects.contains(cutMultipleVinesBtn!) {
-                if GameConfiguration.CanCutMultipleVinesAtOnce {
-                    GameConfiguration.CanCutMultipleVinesAtOnce = false
+                if GameConfiguration.canCutMultipleVinesAtOnce {
+                    GameConfiguration.canCutMultipleVinesAtOnce = false
                     cutMultipleVinesBtn!.texture = SKTexture(imageNamed: ImageName.Unchecked)
                 } else {
-                    GameConfiguration.CanCutMultipleVinesAtOnce = true
+                    GameConfiguration.canCutMultipleVinesAtOnce = true
                     cutMultipleVinesBtn!.texture = SKTexture(imageNamed: ImageName.Checked)
                 }
             }
