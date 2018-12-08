@@ -41,9 +41,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     var mainMenuBtn: SKSpriteNode?
-    var mainMenuLabel: SKLabelNode?
     var playAgainBtn: SKSpriteNode?
-    var playAgainLabel: SKLabelNode?
     
     
     override func didMove(to view: SKView) {
@@ -60,8 +58,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     fileprivate func setupHUD() {
         if currentLives == nil {
-            currentLives = 1//GameConfiguration.maxLives
+            currentLives = GameConfiguration.maxLives
         }
+        
+        mainMenuBtn = SKSpriteNode(imageNamed: ImageName.ButtonMenu)
+        mainMenuBtn!.position = CGPoint(x: self.size.width * 0.75, y: self.size.height * 0.95)
+        mainMenuBtn!.size = mainMenuBtn!.texture!.size()
+        addChild(mainMenuBtn!)
         
         for n in 1...GameConfiguration.maxLives {
             let label = SKSpriteNode(imageNamed: ImageName.Heart)
@@ -77,11 +80,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         scoreLabel.text = "Score \(curScore)/\(maxScore)"
-        scoreLabel.position = CGPoint(x: size.width * 0.75, y: size.height * 0.95)
+        scoreLabel.position = CGPoint(x: size.width * 0.75, y: size.height * 0.90)
         addChild(scoreLabel)
         
         levelLabel.text = "Level \(maxScore + 1)"
-        levelLabel.position = CGPoint(x: size.width * 0.75, y: size.height * 0.9)
+        levelLabel.position = CGPoint(x: size.width * 0.75, y: size.height * 0.85)
         addChild(levelLabel)
         
     }
@@ -123,15 +126,53 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //MARK: - Vine methods
     
+    fileprivate func fuckSwiftNSArrays(array: NSArray) -> NSString {
+        var s : NSString = NSString()
+        
+        for a in array {
+            s = s.appending(a as! String) as NSString
+            s = s.appending(",") as NSString
+        }
+        
+        return s
+    }
+    
     fileprivate func setUpVines() {
         // 1 load vine data
-        let dataFile = Bundle.main.path(forResource: GameConfiguration.file, ofType: nil)
-        let vines = NSArray(contentsOfFile: dataFile!) as! [NSDictionary]
+        var vines: [NSDictionary]?
+        if GameConfiguration.level == 0 {
+            let dataFile = Bundle.main.path(forResource: GameConfiguration.file, ofType: nil)
+            vines = NSArray(contentsOfFile: dataFile!) as! [NSDictionary]
+        } else {
+            
+            let numOfVines: Int = RandomInt(min: 2, max: 4)
+            
+            vines = [NSDictionary]()
+            
+            for i in 1...numOfVines {
+                var relAnchorPoint = NSArray()
+                relAnchorPoint = relAnchorPoint.adding(String(RandomFloat(min: 0.5, max: 1.0))) as NSArray
+                relAnchorPoint = relAnchorPoint.adding(String(RandomFloat(min: 0.5, max: 1.0))) as NSArray
+                
+                var anchorPoint = NSArray()
+                anchorPoint = anchorPoint.adding(RandomInt(min: 0, max: Int(self.size.width))) as NSArray
+                anchorPoint = anchorPoint.adding(RandomInt(min: 0, max: Int(self.size.height))) as NSArray
+                let length = RandomInt(min: 15, max: 30)
+                vines!.append([
+                    "relAnchorPoint" : fuckSwiftNSArrays(array: relAnchorPoint),
+                    "anchorPoint" : fuckSwiftNSArrays(array: anchorPoint),
+                    "length" : length
+                    ])
+            }
+            
+            print(vines![1]["length"])
+            
+        }
         
         // 2 add vines
-        for i in 0..<vines.count {
+        for i in 0..<vines!.count {
             // 3 create vine
-            let vineData = vines[i]
+            let vineData = vines![i]
             let length = Int(vineData["length"] as! NSNumber)
             let relAnchorPoint = CGPointFromString(vineData["relAnchorPoint"] as! String)
             let anchorPoint = CGPoint(x: relAnchorPoint.x * size.width,
@@ -202,28 +243,35 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        if nodes(at: touches.first!.location(in: self)).contains(mainMenuBtn!) {
+            // load the main menu
+            switchToNewScene(SKTransition.doorway(withDuration: 1.0), .Menu)
+        }
+        
         if levelOver || gameOver {
             if let touch = touches.first {
                 let objects = nodes(at: touch.location(in: self))
-                if objects.contains(mainMenuLabel!) || objects.contains(mainMenuBtn!) {
-                    // load the main menu
-                } else if objects.contains(playAgainBtn!) || objects.contains(playAgainLabel!) {
+                 if objects.contains(playAgainBtn!) {
                     // restart the game
+                    switchToNewScene(SKTransition.doorway(withDuration: 1.0), .Game)
                 }
             }
         } else {
             for touch in touches {
-                let startPoint = touch.location(in: self)
-                let endPoint = touch.previousLocation(in: self)
                 
-                // check if vine cut
-                scene?.physicsWorld.enumerateBodies(alongRayStart: startPoint, end: endPoint,
-                                                    using: { (body, point, normal, stop) in
-                                                        self.checkIfVineCutWithBody(body)
-                })
                 
-                // produce some nice particles
-                showMoveParticles(touchPosition: startPoint)
+                    let startPoint = touch.location(in: self)
+                    let endPoint = touch.previousLocation(in: self)
+                    
+                    // check if vine cut
+                    scene?.physicsWorld.enumerateBodies(alongRayStart: startPoint, end: endPoint,
+                                                        using: { (body, point, normal, stop) in
+                                                            self.checkIfVineCutWithBody(body)
+                    })
+                    
+                    // produce some nice particles
+                    showMoveParticles(touchPosition: startPoint)
             }
         }
     }
@@ -236,35 +284,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         
-        if currentLives! <= 0 {
+        if currentLives! < 0 {
             gameOver = true
         }
         
         if gameOver {
-            if mainMenuBtn == nil {
+            if playAgainBtn == nil {
                 
                 // https://stackoverflow.com/questions/48039140/how-to-get-all-child-nodes-with-name-in-swift-with-scene-kit
                 children.filter({ $0.zPosition == Layer.Crocodile || $0.zPosition == Layer.Prize || $0.zPosition == Layer.Vine }).forEach({ $0.removeFromParent() })
                 
-                mainMenuBtn = SKSpriteNode(imageNamed: ImageName.Button)
-                mainMenuBtn!.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
-                mainMenuBtn!.size = mainMenuBtn!.texture!.size()
-                addChild(mainMenuBtn!)
-                
-                mainMenuLabel = SKLabelNode(fontNamed: "chalkduster")
-                mainMenuLabel!.text = "Main Menu"
-                mainMenuLabel!.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
-                addChild(mainMenuLabel!)
-                
-                playAgainBtn = SKSpriteNode(imageNamed: ImageName.Button)
+                playAgainBtn = SKSpriteNode(imageNamed: ImageName.ButtonRestart)
                 playAgainBtn!.position = CGPoint(x: self.size.width / 2, y: self.size.height * 0.75)
                 playAgainBtn!.size = playAgainBtn!.texture!.size()
                 addChild(playAgainBtn!)
                 
-                playAgainLabel = SKLabelNode(fontNamed: "chalkduster")
-                playAgainLabel!.text = "Play Again"
-                playAgainLabel!.position = CGPoint(x: self.size.width / 2, y: self.size.height * 0.75)
-                addChild(playAgainLabel!)
             }
         }
         
@@ -279,11 +313,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             GameConfiguration.level += 1
             maxScore += 1
             
-            if GameConfiguration.level >= GameConfiguration.MaxLevels {
-                GameConfiguration.level = 1
-            }
+            //if GameConfiguration.level >= GameConfiguration.MaxLevels {
+            //    GameConfiguration.level = 1
+            //}
             
-            switchToNewGameWithTransition(SKTransition.doorway(withDuration: 1.0))
+            // switchToNewGameWithTransition(SKTransition.doorway(withDuration: 1.0))
+            
+            if currentLives! >= 0 {
+                switchToNewScene(SKTransition.doorway(withDuration: 1.0), .Game)
+            } else {
+                
+            }
             
         }
     }
@@ -305,7 +345,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             run(nomNomSoundAction)
             runNomNomAnimationWithDelay(0.15)
             // transition to next level
-            switchToNewGameWithTransition(SKTransition.doorway(withDuration: 1.0))
+            // switchToNewGameWithTransition()
+            switchToNewScene(SKTransition.doorway(withDuration: 1.0), .Game)
         }
     }
     
@@ -339,16 +380,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         vineCut = true
     }
     
-    fileprivate func switchToNewGameWithTransition(_ transition: SKTransition) {
-        
+    enum Scenes {
+        case Game, Menu
+    }
+    
+    fileprivate func switchToNewScene(_ transition: SKTransition, _ scenes: Scenes) {
         let delay = SKAction.wait(forDuration: 1)
         let sceneChange = SKAction.run({
-            let scene = GameScene(size: self.size)
-            scene.currentLives = self.currentLives
-            scene.curScore = self.curScore
-            scene.maxScore = self.maxScore
             
-            self.view?.presentScene(scene, transition: transition)
+            switch scenes {
+            case .Game:
+                let scene = GameScene(size: self.size)
+                
+                scene.currentLives = (self.currentLives! >= 0) ? self.currentLives! : GameConfiguration.maxLives
+                scene.curScore = (self.currentLives! >= 0) ? self.curScore : 0
+                scene.maxScore = (self.currentLives! >= 0) ? self.maxScore : 0
+                
+                self.view?.presentScene(scene, transition: transition)
+                break;
+            case .Menu:
+                self.view?.presentScene(MainMenu(size: self.size), transition: transition)
+                break
+            }
         })
         
         run(SKAction.sequence([delay, sceneChange]))

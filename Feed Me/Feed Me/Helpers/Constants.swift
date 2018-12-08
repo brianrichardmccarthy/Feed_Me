@@ -54,7 +54,5 @@ struct GameConfiguration {
     static var file = "Level-\(level).plist"
     static var canCutMultipleVinesAtOnce = false
     static var playMusic = true
-    
-    static let MaxLevels = 3
     static var maxLives = 3
 }
