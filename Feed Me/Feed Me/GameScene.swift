@@ -126,17 +126,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //MARK: - Vine methods
     
-    fileprivate func fuckSwiftNSArrays(array: NSArray) -> NSString {
-        var s : NSString = NSString()
-        
-        for a in array {
-            s = s.appending(a as! String) as NSString
-            s = s.appending(",") as NSString
-        }
-        
-        return s
-    }
-    
     fileprivate func setUpVines() {
         // 1 load vine data
         var vines: [NSDictionary]?
@@ -148,24 +137,47 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let numOfVines: Int = RandomInt(min: 2, max: 4)
             
             vines = [NSDictionary]()
+            vines?.append([
+                "relAnchorPoint" : ".1187,.9383",
+                "anchorPoint" : "38,533",
+                "length" : 25
+            ])
             
-            for i in 1...numOfVines {
-                var relAnchorPoint = NSArray()
-                relAnchorPoint = relAnchorPoint.adding(String(RandomFloat(min: 0.5, max: 1.0))) as NSArray
-                relAnchorPoint = relAnchorPoint.adding(String(RandomFloat(min: 0.5, max: 1.0))) as NSArray
+            vines?.append([
+                "relAnchorPoint" : ".8500,.8996",
+                "anchorPoint" : "272,511",
+                "length" : 18
+            ])
+            
+            vines?.append([
+                "relAnchorPoint" : ".8593,.7588",
+                "anchorPoint" : "275,431",
+                "length" : 16
+            ])
+            
+            /*
+            for _ in 2...numOfVines {
+                let relAnchorPoint = [
+                    String(RandomFloat(min: 0.5, max: 1.0)),
+                    String(RandomFloat(min: 0.5, max: 1.0))
+                ]
+                let anchorPoint = [
+                    String(RandomInt(min: 0, max: Int(self.size.width))),
+                    String(RandomInt(min: 500, max: Int(self.size.height)))
+                ]
+                //relAnchorPoint = relAnchorPoint.adding() as NSArray
+                //relAnchorPoint = relAnchorPoint.adding() as NSArray
                 
-                var anchorPoint = NSArray()
-                anchorPoint = anchorPoint.adding(RandomInt(min: 0, max: Int(self.size.width))) as NSArray
-                anchorPoint = anchorPoint.adding(RandomInt(min: 0, max: Int(self.size.height))) as NSArray
+                //var anchorPoint = Array<String>()
+                //anchorPoint = anchorPoint.adding() as NSArray
+                //anchorPoint = anchorPoint.adding() as NSArray
                 let length = RandomInt(min: 15, max: 30)
                 vines!.append([
-                    "relAnchorPoint" : fuckSwiftNSArrays(array: relAnchorPoint),
-                    "anchorPoint" : fuckSwiftNSArrays(array: anchorPoint),
+                    "relAnchorPoint" : relAnchorPoint.joined(separator:","),
+                    "anchorPoint" : anchorPoint.joined(separator:","),
                     "length" : length
                     ])
-            }
-            
-            print(vines![1]["length"])
+            } */
             
         }
         
@@ -177,6 +189,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let relAnchorPoint = CGPointFromString(vineData["relAnchorPoint"] as! String)
             let anchorPoint = CGPoint(x: relAnchorPoint.x * size.width,
                                       y: relAnchorPoint.y * size.height)
+            print("Variable")
+            print(vineData)
             let vine = VineNode(length: length, anchorPoint: anchorPoint, name: "\(i)")
             
             // 4 add to scene
