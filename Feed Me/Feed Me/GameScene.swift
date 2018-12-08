@@ -12,22 +12,18 @@ import AVFoundation
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
+    // class variables for buttons, labels, sounds, and other nodes
     private var crocodile: SKSpriteNode!
     private var prize: SKSpriteNode!
-    
     private var currentLives: Int?
-    
     private static var backgroundMusicPlayer: AVAudioPlayer!
     private var sliceSoundAction: SKAction!
     private var splashSoundAction: SKAction!
     private var nomNomSoundAction: SKAction!
-    
     private var levelOver = false
     private var vineCut = false
-    
-    var scoreLabel: SKLabelNode! = SKLabelNode(fontNamed: "Chalkduster")
-    var levelLabel: SKLabelNode! = SKLabelNode(fontNamed: "Chalkduster")
-    
+    private var scoreLabel: SKLabelNode! = SKLabelNode(fontNamed: "Chalkduster")
+    private var levelLabel: SKLabelNode! = SKLabelNode(fontNamed: "Chalkduster")
     private var gameOver = false
     private var curScore = 0 {
         didSet {
@@ -56,23 +52,30 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //MARK: - Level setup
     
+    // method to setup the score, number of hearts/lives, button to go to the main menu
     fileprivate func setupHUD() {
+        // check if current number of lives is null/ nil
         if currentLives == nil {
+            // set it to the maximum number of lives
             currentLives = GameConfiguration.maxLives
         }
         
+        // create the menu button, and add it to the scene
         mainMenuBtn = SKSpriteNode(imageNamed: ImageName.ButtonMenu)
         mainMenuBtn!.position = CGPoint(x: self.size.width * 0.75, y: self.size.height * 0.95)
         mainMenuBtn!.size = mainMenuBtn!.texture!.size()
         addChild(mainMenuBtn!)
         
+        // loop through the maximum number of lives to draw hearts
         for n in 1...GameConfiguration.maxLives {
             let label = SKSpriteNode(imageNamed: ImageName.Heart)
             label.size = CGSize(width: 75, height: 75)
             label.zPosition = 6
             label.position = CGPoint(x: 0 + (label.size.width * CGFloat(n)) + ((n > 1) ? 20 : 0), y: size.height * 0.95)
             
+            // check if the user has lost a life
             if currentLives! < GameConfiguration.maxLives && n > currentLives! {
+                // gray out the heart
                 label.alpha = CGFloat(0.5)
             }
             
@@ -129,7 +132,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     fileprivate func setUpVines() {
         // 1 load vine data
         var vines: [NSDictionary]?
-        if GameConfiguration.level == 0 {
+        
+        // load the vines data from a file
+        // or create am array of NSDictionaries
+        if GameConfiguration.level == 1 {
             let dataFile = Bundle.main.path(forResource: GameConfiguration.file, ofType: nil)
             vines = NSArray(contentsOfFile: dataFile!) as! [NSDictionary]
         } else {
@@ -226,19 +232,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //MARK: - Touch handling
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //if levelOver || gameOver {
-        //    return
-        //}
         vineCut = false
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
+        // switch scene to main menu
         if nodes(at: touches.first!.location(in: self)).contains(mainMenuBtn!) {
             // load the main menu
             switchToNewScene(SKTransition.doorway(withDuration: 1.0), .Menu)
         }
         
+        // check if the player wants to continue or restart the game
         if levelOver || gameOver {
             if let touch = touches.first {
                 let objects = nodes(at: touch.location(in: self))
@@ -250,9 +255,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         } else {
+            // check if the player is cutting the rope
             for touch in touches {
-                
-                
                     let startPoint = touch.location(in: self)
                     let endPoint = touch.previousLocation(in: self)
                     
@@ -268,32 +272,38 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    // I honestly don't know if I missed a step width this function
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) { }
     
+    // I honestly don't know if I missed a step width this function
     fileprivate func showMoveParticles(touchPosition: CGPoint) { }
     
     //MARK: - Game logic
     
     override func update(_ currentTime: TimeInterval) {
-        
+        // check if the player killed their crocodile
         if currentLives! < 0 {
             gameOver = true
         }
         
+        // player killed their let them restart the game or go to the main menu
         if gameOver {
             if playAgainBtn == nil {
                 
+                // remove the crocodile, vines and prize
                 // https://stackoverflow.com/questions/48039140/how-to-get-all-child-nodes-with-name-in-swift-with-scene-kit
                 children.filter({ $0.zPosition == Layer.Crocodile || $0.zPosition == Layer.Prize || $0.zPosition == Layer.Vine }).forEach({ $0.removeFromParent() })
                 
+                // create the play again button
                 playAgainBtn = SKSpriteNode(imageNamed: ImageName.ButtonRestart)
-                playAgainBtn!.position = CGPoint(x: self.size.width / 2, y: self.size.height * 0.75)
+                playAgainBtn!.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2)
                 playAgainBtn!.size = playAgainBtn!.texture!.size()
                 addChild(playAgainBtn!)
                 
             }
         }
         
+        // prevent anything else from updating
         if levelOver || gameOver {
             return
         }
@@ -305,16 +315,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             GameConfiguration.level += 1
             maxScore += 1
             
-            //if GameConfiguration.level >= GameConfiguration.MaxLevels {
-            //    GameConfiguration.level = 1
-            //}
-            
-            // switchToNewGameWithTransition(SKTransition.doorway(withDuration: 1.0))
-            
+            // if player has any lives left
             if currentLives! >= 0 {
+                // reload the game scene
                 switchToNewScene(SKTransition.doorway(withDuration: 1.0), .Game)
-            } else {
-                
             }
             
         }
@@ -337,13 +341,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             run(nomNomSoundAction)
             runNomNomAnimationWithDelay(0.15)
             // transition to next level
-            // switchToNewGameWithTransition()
             switchToNewScene(SKTransition.doorway(withDuration: 1.0), .Game)
         }
     }
     
     fileprivate func checkIfVineCutWithBody(_ body: SKPhysicsBody) {
-        
+        // check if a vine has already been cut, and the player cannot cut more than one at time
         if vineCut && !GameConfiguration.canCutMultipleVinesAtOnce {
             return
         }
@@ -372,10 +375,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         vineCut = true
     }
     
+    // all scenes in the game
     enum Scenes {
         case Game, Menu
     }
     
+    // replaced switch to new game scene with transition or whatever the function was called,
+    // takes a transition style, and the scene to be switched to
     fileprivate func switchToNewScene(_ transition: SKTransition, _ scenes: Scenes) {
         let delay = SKAction.wait(forDuration: 1)
         let sceneChange = SKAction.run({
