@@ -134,50 +134,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             vines = NSArray(contentsOfFile: dataFile!) as! [NSDictionary]
         } else {
             
-            let numOfVines: Int = RandomInt(min: 2, max: 4)
+            let numOfVines: Int = RandomInt(min: 1, max: 4)
             
             vines = [NSDictionary]()
-            vines?.append([
-                "relAnchorPoint" : ".1187,.9383",
-                "anchorPoint" : "38,533",
-                "length" : 25
-            ])
             
-            vines?.append([
-                "relAnchorPoint" : ".8500,.8996",
-                "anchorPoint" : "272,511",
-                "length" : 18
-            ])
-            
-            vines?.append([
-                "relAnchorPoint" : ".8593,.7588",
-                "anchorPoint" : "275,431",
-                "length" : 16
-            ])
-            
-            /*
             for _ in 2...numOfVines {
                 let relAnchorPoint = [
-                    String(RandomFloat(min: 0.5, max: 1.0)),
-                    String(RandomFloat(min: 0.5, max: 1.0))
+                    String(RandomFloat(min: 0.1, max: 0.9)),
+                    String(RandomFloat(min: 0.7, max: 0.9))
                 ]
                 let anchorPoint = [
                     String(RandomInt(min: 0, max: Int(self.size.width))),
                     String(RandomInt(min: 500, max: Int(self.size.height)))
                 ]
-                //relAnchorPoint = relAnchorPoint.adding() as NSArray
-                //relAnchorPoint = relAnchorPoint.adding() as NSArray
                 
-                //var anchorPoint = Array<String>()
-                //anchorPoint = anchorPoint.adding() as NSArray
-                //anchorPoint = anchorPoint.adding() as NSArray
                 let length = RandomInt(min: 15, max: 30)
                 vines!.append([
-                    "relAnchorPoint" : relAnchorPoint.joined(separator:","),
-                    "anchorPoint" : anchorPoint.joined(separator:","),
+                    "relAnchorPoint" : String("{\(relAnchorPoint.joined(separator:","))}"),
+                    "anchorPoint" : String("{\(anchorPoint.joined(separator:","))}"),
                     "length" : length
                     ])
-            } */
+            }
             
         }
         
@@ -187,10 +164,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let vineData = vines![i]
             let length = Int(vineData["length"] as! NSNumber)
             let relAnchorPoint = CGPointFromString(vineData["relAnchorPoint"] as! String)
+            print(relAnchorPoint)
             let anchorPoint = CGPoint(x: relAnchorPoint.x * size.width,
                                       y: relAnchorPoint.y * size.height)
-            print("Variable")
-            print(vineData)
             let vine = VineNode(length: length, anchorPoint: anchorPoint, name: "\(i)")
             
             // 4 add to scene
@@ -266,9 +242,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if levelOver || gameOver {
             if let touch = touches.first {
                 let objects = nodes(at: touch.location(in: self))
-                 if objects.contains(playAgainBtn!) {
-                    // restart the game
-                    switchToNewScene(SKTransition.doorway(withDuration: 1.0), .Game)
+                if playAgainBtn != nil {
+                    if objects.contains(playAgainBtn!) {
+                        // restart the game
+                        switchToNewScene(SKTransition.doorway(withDuration: 1.0), .Game)
+                    }
                 }
             }
         } else {
